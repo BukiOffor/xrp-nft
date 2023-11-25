@@ -109,7 +109,7 @@ function App() {
             ? <>Please sign in to enjoy the app</>
             :
           <div className='text-lg'>
-            Welcome <b>{account}</b>
+            Welcome <b>{account}</b><br/>
             <>balance: {balance} xrp</>
           </div>
         }
