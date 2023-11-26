@@ -76,6 +76,64 @@ async function get_tokens(address) {
     }
 }
 
+
+async function get_info(account) {
+    await client.connect();
+
+    const acc_info = await client.request({
+        "id": 2,
+        "command": "account_currencies",
+        "account": account,
+        "ledger_index": "current",
+    })
+    const currency = acc_info.result.receive_currencies[0]
+    await client.disconnect();
+    return (currency)
+}
+
+async function offers(account,currency) {
+    await client.connect();  
+    // const acc_info = await client.request({
+    //     "id": 2,
+    //     "command": "account_currencies",
+    //     "account": account,
+    //     "ledger_index": "current",
+    // })
+    // const currency = acc_info.result.receive_currencies[0]
+
+    const response = await client.request({
+        "id": 4,
+        "command": "book_offers",
+        "taker": "r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59",
+        "ledger_index": "current",
+        "taker_pays": {
+            "currency": currency,
+            "issuer": account,
+        },
+        "taker_gets": {
+          "currency": "XRP",
+        },
+        "limit": 1
+      });
+   
+    const tx = response.result.offers
+    await client.disconnect()
+    return tx[0].TakerGets/1000000 / tx[0].TakerPays.value
+
+}
+
+
+app.get('/price/:token', (req,res)=>{
+    async function getTokenPrice(){
+        const { token } = req.params;
+        const currency = await get_info(token)
+        const data = await offers(token, currency)
+        console.log(data)
+        res.send({data:data})
+    }getTokenPrice()
+})
+
+
 app.get('/nfts/:account', (req,res)=>{
     async function getMyNfts(){
         const { account } = req.params;
