@@ -93,13 +93,6 @@ async function get_info(account) {
 
 async function offers(account,currency) {
     await client.connect();  
-    // const acc_info = await client.request({
-    //     "id": 2,
-    //     "command": "account_currencies",
-    //     "account": account,
-    //     "ledger_index": "current",
-    // })
-    // const currency = acc_info.result.receive_currencies[0]
 
     const response = await client.request({
         "id": 4,
